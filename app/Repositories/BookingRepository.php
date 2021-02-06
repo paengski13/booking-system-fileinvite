@@ -35,14 +35,22 @@ class BookingRepository extends Model
     {
         $startDateSearch = $request->input('start_date');
         $endDateSearch = $request->input('end_date');
-        $roomNameSearch = $request->input('room_name');
+        $roomIdSearch = $request->input('room_id');
+        $fulltextSearch = $request->input('full_text');
         $orderBy = $request->input('order_by', 'starts_at');
         $sortBy = $request->input('sort_by', 'desc');
 
         $query = $this->model
-            ->when($roomNameSearch, function ($query, $roomNameSearch) {
-                return $query->whereHas('room', function (Builder $query) use ($roomNameSearch) {
-                    $query->where('name', 'like', '%' . $roomNameSearch . '%');
+            ->when($roomIdSearch, function ($query, $roomIdSearch) {
+                return $query->where('room_id', $roomIdSearch);
+            })
+            ->when($fulltextSearch, function ($query, $fulltextSearch) {
+                return $query->where(function($query) use ($fulltextSearch) {
+                    $query->whereHas('room', function (Builder $query) use ($fulltextSearch) {
+                        $query->where('name', 'like', '%' . $fulltextSearch . '%');
+                    })->orWhereHas('user', function (Builder $query) use ($fulltextSearch) {
+                        $query->where('name', 'like', '%' . $fulltextSearch . '%');
+                    });
                 });
             });
 
