@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PassportAuthController;
+
+use \App\Http\Controllers\Api\BookingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +19,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::prefix('/bookings')->namespace('App\Http\Controllers\Api')->name('bookings.')->group(function () {
+
+    // available for guest and logged-in users
+    Route::get('', [BookingController::class, 'index'])->name('index');
+
+    // available logged-in users only
+    Route::middleware('auth:api')->group(function () {
+
+    });
 });

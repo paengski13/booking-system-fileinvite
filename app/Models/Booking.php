@@ -9,6 +9,8 @@ class Booking extends Model
 {
     use HasFactory;
 
+    const DATE_FORMAT = 'D jS M Y g:ia';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -28,16 +30,40 @@ class Booking extends Model
      * @var array
      */
     protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
+        'starts_at' => 'datetime:' . self::DATE_FORMAT,
+        'ends_at' => 'datetime:' . self::DATE_FORMAT,
     ];
+
+    /**
+     * Get the formatted start datetime
+     *
+     * @return string
+     */
+    public function getFormattedStartsAtAttribute()
+    {
+        if ($this->starts_at) {
+            return $this->starts_at->format(self::DATE_FORMAT);
+        }
+    }
+
+    /**
+     * Get the formatted end datetime
+     *
+     * @return string
+     */
+    public function getFormattedEndsAtAttribute()
+    {
+        if ($this->ends_at) {
+            return $this->ends_at->format(self::DATE_FORMAT);
+        }
+    }
 
     /**
      * Get the user who booked the room.
      */
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -45,6 +71,6 @@ class Booking extends Model
      */
     public function room()
     {
-        return $this->hasOne(Room::class);
+        return $this->belongsTo(Room::class);
     }
 }
