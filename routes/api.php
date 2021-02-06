@@ -25,9 +25,12 @@ Route::prefix('/bookings')->namespace('App\Http\Controllers\Api')->name('booking
 
     // available for guest and logged-in users
     Route::get('', [BookingController::class, 'index'])->name('index');
+    Route::get('{id}', [BookingController::class, 'show'])->name('show');
 
     // available logged-in users only
     Route::middleware('auth:api')->group(function () {
-
+        Route::post('store', [BookingController::class, 'store'])->name('store');
+        Route::put('{id}', [BookingController::class, 'update'])->name('update');
+        Route::delete('{id}', [BookingController::class, 'destroy'])->name('destroy');
     });
 });

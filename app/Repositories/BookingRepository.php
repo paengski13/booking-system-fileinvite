@@ -6,6 +6,7 @@ use App\Models\Booking;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class BookingRepository extends Model
 {
@@ -29,7 +30,7 @@ class BookingRepository extends Model
      * Get list of bookings based on user's search criteria and sort order
      *
      * @param Request $request
-     * @return bool
+     * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getBookings($request)
     {
@@ -61,5 +62,64 @@ class BookingRepository extends Model
         $query = $query->orderBy($orderBy, $sortBy);
 
         return $query;
+    }
+
+    /**
+     * Create a booking record
+     *
+     * @param Request $request
+     * @return \App\Models\Booking
+     */
+    public function createBooking($request)
+    {
+        return $this->model->create([
+            'user_id' => Auth::user()->id,
+            'room_id' => $request->input('room_id'),
+            'starts_at' => $request->input('starts_at'),
+            'ends_at' => $request->input('ends_at'),
+            'notes' => $request->input('notes'),
+        ]);
+    }
+
+    /**
+     * Create a booking record
+     *
+     * @param int $id
+     * @return \App\Models\Booking
+     */
+    public function getBooking($id)
+    {
+        return $this->model->findOrFail($id);
+    }
+
+    /**
+     * Update a booking record
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \App\Models\Booking
+     */
+    public function updateBooking($request, $id)
+    {
+        $booking = $this->getBooking($id);
+        $booking->room_id = $request->input('room_id');
+        $booking->starts_at = $request->input('starts_at');
+        $booking->ends_at = $request->input('ends_at');
+        $booking->notes = $request->input('notes');
+        $booking->update();
+
+        return $booking;
+    }
+
+    /**
+     * Delete a booking record
+     *
+     * @param int $id
+     * @return \App\Models\Booking
+     */
+    public function deleteBooking($id)
+    {
+        $booking = $this->getBooking($id);
+        return $booking->delete();
     }
 }

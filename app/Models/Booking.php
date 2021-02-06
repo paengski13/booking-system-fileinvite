@@ -9,8 +9,6 @@ class Booking extends Model
 {
     use HasFactory;
 
-    const DATE_FORMAT = 'D jS M Y g:ia';
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,8 +28,8 @@ class Booking extends Model
      * @var array
      */
     protected $casts = [
-        'starts_at' => 'datetime:' . self::DATE_FORMAT,
-        'ends_at' => 'datetime:' . self::DATE_FORMAT,
+        'starts_at' => 'datetime',
+        'ends_at' => 'datetime',
     ];
 
     /**
@@ -42,7 +40,7 @@ class Booking extends Model
     public function getFormattedStartsAtAttribute()
     {
         if ($this->starts_at) {
-            return $this->starts_at->format(self::DATE_FORMAT);
+            return $this->starts_at->format(config('constants.datetime_format_display'));
         }
     }
 
@@ -54,7 +52,7 @@ class Booking extends Model
     public function getFormattedEndsAtAttribute()
     {
         if ($this->ends_at) {
-            return $this->ends_at->format(self::DATE_FORMAT);
+            return $this->ends_at->format(config('constants.datetime_format_display'));
         }
     }
 
