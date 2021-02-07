@@ -2,8 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\BookingDuration;
+use App\Rules\BookingExist;
+use App\Rules\SameDate;
+use App\Rules\TimePeriod;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreBookingRequest extends FormRequest
 {
@@ -14,7 +19,7 @@ class StoreBookingRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -25,8 +30,14 @@ class StoreBookingRequest extends FormRequest
     public function rules()
     {
         return [
-            'start_date' => ['required', 'date', 'required_with:end_date'],
-            'end_date' => ['required', 'date', 'required_with:start_date', 'after:start_date', 'in:30,60'],
+            'room_id' => ['required', 'integer', 'exists:rooms,id'],
+            'starts_at' => ['required', 'date', 'date_format:Y-m-d H:i:s',
+                new SameDate($this->input('ends_at')),
+                new BookingDuration($this->input('ends_at')),
+                new TimePeriod(),
+                new BookingExist($this->input('starts_at'), $this->input('ends_at')),
+            ],
+            'ends_at' => ['required', 'date', 'after:starts_at', 'date_format:Y-m-d H:i:s', new TimePeriod()],
         ];
     }
 }

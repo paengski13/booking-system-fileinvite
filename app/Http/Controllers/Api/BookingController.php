@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexBookingRequest;
+use App\Http\Requests\StoreBookingRequest;
 use App\Http\Resources\BookingCollection;
 use App\Http\Resources\BookingResource;
-use Illuminate\Http\Request;
 use App\Repositories\BookingRepository;
 
 class BookingController extends Controller
@@ -31,14 +31,14 @@ class BookingController extends Controller
     public function index(IndexBookingRequest $request)
     {
         $collection = $this->bookingRepo->getBookings($request)->paginate(3);
-        return new BookingCollection($collection, "");
+        return new BookingCollection($collection);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreBookingRequest $request
-     * @return \App\Http\Resources\BookingResource
+     * @param  StoreBookingRequest $request
+     * @return BookingResource
      */
     public function store(StoreBookingRequest $request)
     {
@@ -50,7 +50,7 @@ class BookingController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \App\Http\Resources\BookingResource
+     * @return BookingResource
      */
     public function show($id)
     {
@@ -61,11 +61,11 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\StoreBookingRequest $request
+     * @param  StoreBookingRequest $request
      * @param  int  $id
-     * @return \App\Http\Resources\BookingResource
+     * @return BookingResource
      */
-    public function update(Request $request, $id)
+    public function update(StoreBookingRequest $request, $id)
     {
         $booking = $this->bookingRepo->updateBooking($request, $id);
         return new BookingResource($booking);
@@ -75,10 +75,12 @@ class BookingController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \App\Http\Resources\BookingResource
+     * @return BookingResource
      */
     public function destroy($id)
     {
-        return $this->bookingRepo->deleteBooking($id);
+        $booking = $this->bookingRepo->getBooking($id);
+        $this->bookingRepo->deleteBooking($id);
+        return new BookingResource($booking);
     }
 }
