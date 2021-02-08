@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\UnauthorizedException;
 
 class BookingRepository extends Model
 {
@@ -38,10 +39,14 @@ class BookingRepository extends Model
         $endDateSearch = $request->input('end_date');
         $roomIdSearch = $request->input('room_id');
         $fulltextSearch = $request->input('full_text');
+        $myBookingSearch = $request->input('my_bookings', null);
         $orderBy = $request->input('order_by', 'starts_at');
         $sortBy = $request->input('sort_by', 'desc');
 
         $query = $this->model
+            ->when($myBookingSearch, function ($query, $myBookingSearch) {
+                return $query->where('user_id', $myBookingSearch);
+            })
             ->when($roomIdSearch, function ($query, $roomIdSearch) {
                 return $query->where('room_id', $roomIdSearch);
             })
@@ -102,6 +107,7 @@ class BookingRepository extends Model
     public function updateBooking($request, $id)
     {
         $booking = $this->getBooking($id);
+        // TODO: check if auth user is the same as the one who booked it, otherwise, throw an authorizeException
         $booking->room_id = $request->input('room_id');
         $booking->starts_at = $request->input('starts_at');
         $booking->ends_at = $request->input('ends_at');

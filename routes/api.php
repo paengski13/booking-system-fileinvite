@@ -21,6 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Only used during development to test API using postman/curl
+Route::post('register', [PassportAuthController::class, 'register']);
+Route::post('login', [PassportAuthController::class, 'login']);
+
 Route::prefix('/bookings')->namespace('App\Http\Controllers\Api')->name('bookings.')->group(function () {
 
     // available for guest and logged-in users

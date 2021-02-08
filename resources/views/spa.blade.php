@@ -3,7 +3,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div id="app"></div>
             <script>
-              window.auth_user = {{ Auth::user() ? Auth::user()->id : null }};
+              window.auth_user = {{ Auth::user() ? Auth::user()->id : "" }};
             </script>
         </div>
     </div>

@@ -35,7 +35,7 @@ class StoreBookingRequest extends FormRequest
                 new SameDate($this->input('ends_at')),
                 new BookingDuration($this->input('ends_at')),
                 new TimePeriod(),
-                new BookingExist($this->input('starts_at'), $this->input('ends_at')),
+                new BookingExist($this->route('id'), $this->input('starts_at'), $this->input('ends_at')),
             ],
             'ends_at' => ['required', 'date', 'after:starts_at', 'date_format:Y-m-d H:i:s', new TimePeriod()],
         ];

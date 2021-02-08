@@ -5,19 +5,23 @@ namespace App\Rules;
 use App\Models\Booking;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class BookingExist implements Rule
 {
+    protected $bookingId;
     protected $startTime;
     protected $endTime;
 
     /**
      * SameDate constructor.
+     * @param $bookingId
      * @param $startTime
      * @param $endTime
      */
-    public function __construct($startTime, $endTime)
+    public function __construct($bookingId, $startTime, $endTime)
     {
+        $this->bookingId = $bookingId;
         $this->startTime = Carbon::parse($startTime);
         $this->endTime = Carbon::parse($endTime);
     }
@@ -31,8 +35,12 @@ class BookingExist implements Rule
      */
     public function passes($attribute, $value)
     {
-        return !Booking::whereBetween('starts_at', [$this->startTime, $this->endTime])
-            ->orWhereBetween('ends_at', [$this->startTime, $this->endTime])->exists();
+        return !Booking::where('id', '!=', $this->bookingId)
+            ->where(function($query) {
+                $query->whereBetween('starts_at', [$this->startTime, $this->endTime])
+                    ->orWhereBetween('ends_at', [$this->startTime, $this->endTime]);
+            })
+            ->exists();
     }
 
     /**
