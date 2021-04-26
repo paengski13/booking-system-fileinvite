@@ -15,8 +15,7 @@ class GuestLayout extends Component
     {
         $actions = ['walk', 'run', 'eat', 'sleep',];
         foreach ($actions as $action) {
-            if (method_exists($this, $action))
-            {
+            if (method_exists($this, $action)) {
                 $this->{$action}();
             }
         }
