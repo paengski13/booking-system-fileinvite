@@ -15,7 +15,7 @@ class GuestLayout extends Component
     {
         $actions = ['walk', 'run', 'eat', 'sleep',];
         foreach ($actions as $action) {
-            // do something
+            $this->{$action}();
         }
 
         return view('layouts.guest');
