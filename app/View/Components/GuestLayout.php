@@ -13,7 +13,7 @@ class GuestLayout extends Component
      */
     public function render()
     {
-        $actions = ['walk', 'run', 'eat', 'sleep',];
+        $actions = ['walk', 'run', 'eat', 'sleep', 'talk'];
         foreach ($actions as $action) {
             if (method_exists($this, $action)) {
                 $this->{$action}();
