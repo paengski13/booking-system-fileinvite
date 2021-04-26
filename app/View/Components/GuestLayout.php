@@ -13,6 +13,11 @@ class GuestLayout extends Component
      */
     public function render()
     {
+        $actions = ['walk', 'run', 'eat', 'sleep',];
+        foreach ($actions as $action) {
+            // do something
+        }
+
         return view('layouts.guest');
     }
 }
